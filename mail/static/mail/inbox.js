@@ -58,157 +58,63 @@ function load_mailbox(mailbox) {
       // Print emails
       console.log(emails);
 
-      
-      if (mailbox === 'sent') {
+      // Display Emails according to it's mailbox
+      emails.forEach(element => {
 
-        emails.forEach(element => {
+        const el = document.createElement('div');
 
-          const el = document.createElement('div');
+        // Creating Mail child elements
+        const el_sender = document.createElement('h5');
+        el_sender.innerText = element.sender;
 
-          // Creating Mail child elements
-          const el_recipients = document.createElement('h5');
-          el_recipients.innerText = element.recipients[0];
+        const el_recipients = document.createElement('h5');
+        el_recipients.innerText = element.recipients[0];
 
-          const el_subject = document.createElement('p');
-          el_subject.innerText = element.subject;
+        const el_subject = document.createElement('p');
+        el_subject.innerText = element.subject;
 
-          const el_timestamp = document.createElement('p');
-          el_timestamp.innerText = element.timestamp
+        const el_timestamp = document.createElement('p');
+        el_timestamp.innerText = element.timestamp
 
-          // Appending child elements to the main Div
+        // Appending child elements to the main Div
+        if (mailbox === 'sent') {
           el.append(el_recipients);
           el.append(el_subject);
           el.append(el_timestamp);
-
-          // Adjust styles
-          console.log(el.children);
-          el.style.border = "solid blue 0.2rem";
-          el.style.padding = "0.3rem";
-          el.style.marginBottom = "0.5rem";
-          el.style.display = "flex";
-          el.style.alignItems = "center"
-
-          el.childNodes.forEach(ch => {
-            ch.style.display = "inline";
-            ch.style.marginBottom = "0rem"
-          });
-
-          chn = el.childNodes;
-          chn[1].style.marginLeft = "1rem";
-          chn[1].style.color = "#0000ff";
-
-          chn[2].style.marginLeft = "auto"
-
-
-          document.querySelector('#emails-view').append(el);
-        });
-      } else if (mailbox === 'inbox') {
-        emails.forEach(element => {
-
-          const el = document.createElement('div');
-
-          // Creating Mail child elements
-          const el_sender = document.createElement('h5');
-          el_sender.innerText = element.sender;
-
-          const el_subject = document.createElement('p');
-          el_subject.innerText = element.subject;
-
-          const el_timestamp = document.createElement('p');
-          el_timestamp.innerText = element.timestamp
-
-          // Appending child elements to the main Div
+        } else if (mailbox === 'inbox') {
           el.append(el_sender);
           el.append(el_subject);
           el.append(el_timestamp);
-
-          // Adjust styles
-          console.log(el.children);
-          el.style.border = "solid blue 0.2rem";
-          el.style.padding = "0.3rem";
-          el.style.marginBottom = "0.5rem";
-          el.style.display = "flex";
-          el.style.alignItems = "center"
-
-          el.childNodes.forEach(ch => {
-            ch.style.display = "inline";
-            ch.style.marginBottom = "0rem"
-          });
-
-          chn = el.childNodes;
-          chn[1].style.marginLeft = "1rem";
-          chn[1].style.color = "#0000ff";
-
-          chn[2].style.marginLeft = "auto"
-
-          document.querySelector('#emails-view').append(el);
-
-        });
-      } else if (mailbox === 'archive') {
-        
-        emails.forEach(element => {
-
-          const el = document.createElement('div');
-
-          // Creating Mail child elements
-          const el_sender = document.createElement('h5');
-          el_sender.innerText = element.sender;
-
-          const el_subject = document.createElement('p');
-          el_subject.innerText = element.subject;
-
-          const el_timestamp = document.createElement('p');
-          el_timestamp.innerText = element.timestamp
-
-          // Appending child elements to the main Div
+        } else if (mailbox === 'archive') {
           el.append(el_sender);
           el.append(el_subject);
           el.append(el_timestamp);
+        } else {
+          console.log("Invalid Mailbox!")
+        }
 
-          // Adjust styles
-          console.log(el.children);
-          el.style.border = "solid blue 0.2rem";
-          el.style.padding = "0.3rem";
-          el.style.marginBottom = "0.5rem";
-          el.style.display = "flex";
-          el.style.alignItems = "center"
+        // Adjust styles
+        console.log(el.children);
+        el.style.border = "solid blue 0.2rem";
+        el.style.padding = "0.3rem";
+        el.style.marginBottom = "0.5rem";
+        el.style.display = "flex";
+        el.style.alignItems = "center"
 
-          el.childNodes.forEach(ch => {
-            ch.style.display = "inline";
-            ch.style.marginBottom = "0rem"
-          });
-
-          chn = el.childNodes;
-          chn[1].style.marginLeft = "1rem";
-          chn[1].style.color = "#0000ff";
-
-          chn[2].style.marginLeft = "auto"
-
-          document.querySelector('#emails-view').append(el);
-          
+        el.childNodes.forEach(ch => {
+          ch.style.display = "inline";
+          ch.style.marginBottom = "0rem"
         });
 
-      } else {
-        console.log("Invalid mailbox!")
-      }
+        chn = el.childNodes;
+        chn[1].style.marginLeft = "1rem";
+        chn[1].style.color = "#0000ff";
+
+        chn[2].style.marginLeft = "auto"
+
+
+        document.querySelector('#emails-view').append(el);
+      });
+
     });
-}
-
-function sendMail() {
-  console.log("Here!")
-  fetch('/emails', {
-    method: 'POST',
-    body: JSON.stringify({
-      recipients: 'emad@example.com',
-      subject: 'Meeting time',
-      body: 'How about we meet tomorrow at 3pm?'
-    })
-  })
-    .then(response => response.json())
-    .then(result => {
-      // Print result
-      console.log(result);
-    })
-
-  return false;
 }
