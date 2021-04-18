@@ -88,19 +88,38 @@ function load_mailbox(mailbox) {
 
           const el_recipients = document.createElement("div");
 
-          recipients.forEach((recipient, i) => {
+          recipients.forEach((recipient) => {
             const el_recipient = document.createElement("h6");
-            el_recipient.style.margin = "0rem"
-            el_recipient.innerText = recipients[i];
+            el_recipient.style.margin = "0rem";
+            el_recipient.innerText = recipient;
             el_recipients.append(el_recipient);
           });
           el.append(el_recipients);
           el.append(el_subject);
           el.append(el_timestamp);
         } else if (mailbox === "inbox" || mailbox === "archive") {
+          switchBtn = document.createElement("button");
+          switchBtn.innerText = element.archived ? "Unarchive" : "Archive";
+          switchBtn.classList.add("btn");
+          switchBtn.classList.add("btn-secondary");
+          switchBtn.classList.add("ml-1");
+          switchBtn.addEventListener("click", function (e) {
+            console.log("archive clicked!");
+            fetch(`/emails/${element.id}`, {
+              method: "PUT",
+              body: JSON.stringify({
+                archived: !element.archived,
+              }),
+            });
+            e.stopPropagation();
+            const node = e.currentTarget;
+            node.parentNode.parentNode.removeChild(node.parentNode);
+          });
+
           el.append(el_sender);
           el.append(el_subject);
           el.append(el_timestamp);
+          el.append(switchBtn);
         } else {
           console.log("Invalid Mailbox!");
         }
@@ -126,6 +145,16 @@ function load_mailbox(mailbox) {
 
         // Add event listener to the main element
         el.addEventListener("click", function () {
+          // Remove the unread mark
+          if (!element.read) {
+            fetch(`/emails/${element.id}`, {
+              method: "PUT",
+              body: JSON.stringify({
+                read: true,
+              }),
+            });
+          }
+
           console.log("This element has been clicked!");
           fetch(`/emails/${element.id}`)
             .then((response) => response.json())
@@ -163,7 +192,38 @@ function load_mailbox(mailbox) {
               mailEl.append(mailEl_br);
               mailEl_timestamp = document.createElement("small");
               mailEl_timestamp.innerText = `${email.timestamp}`;
+              mailEl_timestamp.style.float = "right";
               mailEl.append(mailEl_timestamp);
+
+              // Add reply feature
+              const username = document.querySelector("#loggedIn_username").innerText;
+              if (element.sender !== username) {
+                mailEl_reply = document.createElement("button");
+                mailEl_reply.classList.add("btn");
+                mailEl_reply.classList.add("btn-block");
+                mailEl_reply.classList.add("btn-primary");
+
+                senderArr = element.sender.split("@");
+                senderName =
+                  senderArr[0].charAt(0).toUpperCase() + senderArr[0].slice(1);
+                mailEl_reply.innerText = `Reply ${senderName}`;
+
+                mailEl_reply.addEventListener("click", () => {
+                  compose_email();
+
+                  document.querySelector("#compose-recipients").value = `${element.sender}`;
+                  document.querySelector("#compose-body").value = `On ${element.timestamp} ${element.sender} wrote: ${element.body} \n*`;
+
+                  if (element.subject.startsWith("Re: ")) {
+                    document.querySelector("#compose-subject").value = `${element.subject}`;
+                  } else {
+                    document.querySelector("#compose-subject").value = `Re: ${element.subject}`;
+                  }
+
+                });
+
+                mailEl.append(mailEl_reply);
+              }
 
               document.querySelector("#email-view").append(mailEl);
             });
