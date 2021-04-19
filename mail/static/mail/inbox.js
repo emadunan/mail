@@ -69,8 +69,8 @@ function load_mailbox(mailbox) {
       emails.forEach((element) => {
         const el = document.createElement("div");
         element.read
-          ? (el.style.backgroundColor = "#ffffff")
-          : (el.style.backgroundColor = "#ebecf0");
+          ? (el.style.backgroundColor = "#bdc7c9")
+          : (el.style.backgroundColor = "#ffffff");
 
         // Creating Mail child elements
         const el_sender = document.createElement("h5");
@@ -104,7 +104,7 @@ function load_mailbox(mailbox) {
           switchBtn.classList.add("btn-secondary");
           switchBtn.classList.add("ml-1");
           switchBtn.addEventListener("click", function (e) {
-            console.log("archive clicked!");
+            
             fetch(`/emails/${element.id}`, {
               method: "PUT",
               body: JSON.stringify({
@@ -125,7 +125,7 @@ function load_mailbox(mailbox) {
         }
 
         // Adjust styles
-        console.log(el.children);
+        // console.log(el.children);
         el.style.border = "solid blue 0.2rem";
         el.style.padding = "0.3rem";
         el.style.marginBottom = "0.5rem";
@@ -155,7 +155,6 @@ function load_mailbox(mailbox) {
             });
           }
 
-          console.log("This element has been clicked!");
           fetch(`/emails/${element.id}`)
             .then((response) => response.json())
             .then((email) => {
